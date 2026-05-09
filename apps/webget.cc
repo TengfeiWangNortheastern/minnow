@@ -9,7 +9,7 @@ using namespace std;
 
 void get_URL( const string& host, const string& path )
 {
-TCPSocket socket;
+  TCPSocket socket;
   socket.connect( Address( host, "http" ) );
 
   // 这里的每行结尾必须是 \r\n，最后还要多一个 \r\n

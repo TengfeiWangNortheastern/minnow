@@ -1,8 +1,8 @@
 #pragma once
-
-#include "byte_stream.hh"
-
+#include <map>
 #include <string>
+#include <cstdint> // 用于 uint64_t
+#include "byte_stream.hh"
 
 class Reassembler
 {
@@ -28,8 +28,10 @@ public:
    * The Reassembler should close the stream after writing the last byte.
    */
   void insert( uint64_t first_index, std::string data, bool is_last_substring, Writer& output );
-  map<uint64_t, string> starting_sequence_number;
-  uint64_t last_byte_index;
+  std::map<uint64_t, std::string> _buffer {};
+  uint64_t _bytes_pending = 0;           // cached bytes
   // How many bytes are stored in the Reassembler itself?
+  bool _is_last_received = false; // if received the end sign
+  uint64_t _last_index = 0;       // 结束字节的绝对位置
   uint64_t bytes_pending() const;
 };
