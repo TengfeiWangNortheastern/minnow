@@ -14,15 +14,17 @@ protected:
   uint64_t capacity_;
   // Please add any additional state to the ByteStream here, and not to the Writer and Reader interfaces.
   std::deque<std::string> buffer_;
-  bool closed_ {false};
-  bool error_ {false};
-  uint64_t bytes_pushed_ {0};
-  uint64_t bytes_popped_ {0};
-  uint64_t bytes_buffered_ {0};
+  bool closed_ { false };
+  bool error_ { false };
+  uint64_t bytes_pushed_ { 0 };
+  uint64_t bytes_popped_ { 0 };
+  uint64_t bytes_buffered_ { 0 };
+
 public:
   explicit ByteStream( uint64_t capacity );
 
-  // Helper functions (provided) to access the std::deque<char> buffer_ {};std::deque<char> buffer_ {};ByteStream's Reader and Writer interfaces
+  // Helper functions (provided) to access the std::deque<char> buffer_ {};std::deque<char> buffer_ {};ByteStream's
+  // Reader and Writer interfaces
   Reader& reader();
   const Reader& reader() const;
   Writer& writer();
@@ -32,7 +34,7 @@ public:
 class Writer : public ByteStream
 {
 public:
-  void push(const std::string& data ); // Push data to stream, but only as much as available capacity allows.
+  void push( const std::string& data ); // Push data to stream, but only as much as available capacity allows.
 
   void close();     // Signal that the stream has reached its ending. Nothing more will be written.
   void set_error(); // Signal that the stream suffered an error.

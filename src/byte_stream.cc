@@ -8,19 +8,30 @@
 
 using namespace std;
 
-ByteStream::ByteStream( uint64_t capacity ) : capacity_( capacity ) {}
-
+//ByteStream::ByteStream( uint64_t capacity ) : capacity_( capacity ) {}
+// 在 src/byte_stream.cc 中
+ByteStream::ByteStream( uint64_t capacity ) 
+: capacity_( capacity )
+  , buffer_()           // 1. deque
+  , closed_( false )    // 2. bool closed_
+  , error_( false )     // 3. bool error_
+  , bytes_pushed_( 0 )  // 4. uint64_t
+  , bytes_popped_( 0 )  // 5. uint64_t
+  , bytes_buffered_( 0 ) // 6. uint64_t
+{
+    // 这里可以留空
+}
 void Writer::push( const string& data )
 {
   // Your code here.
-  if(is_closed() || data.empty()){
+  if ( is_closed() || data.empty() ) {
     return;
   }
   const uint64_t can_push = available_capacity();
-  const uint64_t actual_push = min(can_push, static_cast<uint64_t>(data.size()));
-  if(actual_push > 0){
-    string content = data.substr(0, actual_push);
-    buffer_.emplace_back(move(content));
+  const uint64_t actual_push = min( can_push, static_cast<uint64_t>( data.size() ) );
+  if ( actual_push > 0 ) {
+    string content = data.substr( 0, actual_push );
+    buffer_.emplace_back( move( content ) );
     bytes_pushed_ += actual_push;
     bytes_buffered_ += actual_push;
   }
@@ -59,7 +70,7 @@ uint64_t Writer::bytes_pushed() const
 string_view Reader::peek() const
 {
   // Your code here.
-  if(buffer_.empty()){
+  if ( buffer_.empty() ) {
     return {};
   }
   return buffer_.front();
@@ -68,7 +79,7 @@ string_view Reader::peek() const
 bool Reader::is_finished() const
 {
   // Your code here.
-  return closed_ && (bytes_buffered_ == 0);
+  return closed_ && ( bytes_buffered_ == 0 );
 }
 
 bool Reader::has_error() const
@@ -80,19 +91,19 @@ bool Reader::has_error() const
 void Reader::pop( uint64_t len )
 {
   // Your code here.
-  const uint64_t bytes_to_pop = min(len, bytes_buffered_);
+  const uint64_t bytes_to_pop = min( len, bytes_buffered_ );
   uint64_t remaining = bytes_to_pop;
-  while(remaining>0 && !buffer_.empty()){
+  while ( remaining > 0 && !buffer_.empty() ) {
     string& front_str = buffer_.front();
-    if(front_str.size()<=remaining){
+    if ( front_str.size() <= remaining ) {
       remaining -= front_str.size();
       buffer_.pop_front();
-    }else{
-      front_str.erase(0, remaining);
+    } else {
+      front_str.erase( 0, remaining );
       remaining = 0;
     }
   }
-  bytes_popped_ +=bytes_to_pop;
+  bytes_popped_ += bytes_to_pop;
   bytes_buffered_ -= bytes_to_pop;
 }
 
